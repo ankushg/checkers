@@ -60,6 +60,9 @@
     // The color parameter should be either "black" or "red"
     var toggleTurn = function(color) {
 	// Your code here
+  console.log($("#turnIndicator"));
+      $("#turnIndicator").html(color + " turn");
+      whoseTurn = color;
     }
 
 
@@ -143,6 +146,7 @@
 
       $("#btnNewGame").click(function(evt) {
           board.prepareNewGame();
+          toggleTurn("black");
       });
 
       $("#btnAutoMove").click(function(evt) {
@@ -150,7 +154,7 @@
         var playerDirection = directionOf(playerColor);
         var result = rules.makeRandomMove(playerColor, playerDirection);
         if (result != null) {
-          toggleTurn();
+          toggleTurn( playerColor=="red" ? "black" : "red");
         }
       });
 
@@ -168,10 +172,9 @@
     <tr>
         <td id="navigation">
           <table>
-			  <tr><td>		<!-- Your code here -->			</td></tr>
+			  <tr><td><div id="turnIndicator">blorp</div></td></tr>
               <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
               <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
-
             </table>
         </td>
 
