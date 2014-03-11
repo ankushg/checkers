@@ -2,7 +2,7 @@
 
 <!--
   COLLABORATORS:
-  
+  none
 -->
 <html>
 
@@ -47,7 +47,7 @@
     //data model
     var board;
     var rules;
-    var whoseTurn = "black";	
+    var whoseTurn = "black";
 
     var directionOf = function(color) {
       if (color == "black") {
@@ -75,42 +75,75 @@
         }
 
 
-	rules = new Rules(board);
+	    rules = new Rules(board);
 
+      var can = document.getElementById('checkerboard');
+      var ctx = can.getContext('2d');
 
-     	// Your code here
+      // set up a pattern
+      var pattern = document.createElement('canvas');
+      var cellsize = 400 / board.boardSize;
+      pattern.width = 2 * cellsize;
+      pattern.height = 2 * cellsize;
+      var pctx = pattern.getContext('2d');
+      pctx.fillStyle = "rgb(0, 0, 0)";
+      pctx.fillRect(0, cellsize, cellsize, cellsize);
+      pctx.fillRect(cellsize, 0, cellsize, cellsize);
 
-        board.addEventListener('add',function (e) {
-    		// Your code here
+      // draw pattern
+      var pattern = ctx.createPattern(pattern, "repeat");
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(0, 400);
+      ctx.lineTo(400, 400);
+      ctx.lineTo(400, 0);
+      ctx.fillStyle = pattern;
+      ctx.fill();
+
+      var getColorAt = function(row, col){
+        if ((row + col) % 2 == 0){
+          return "FFF";
+        } else {
+          return "000"
+        }
+      }
+
+      board.addEventListener('add',function (e) {
+    		  base_image = new Image();
+          base_image.src = "graphics/" + e.checker.color + (e.checker.isKing ? "-king.png" : "-piece.png");
+          base_image.onload = function(){
+            context.drawImage(base_image, e.row*cellsize, e.col*cellsize, cellsize, cellsize);
+          }
     	},true);
 
     	board.addEventListener('move',function (e) {
-    		// Your code here
+    		board.remove(e.checker);
+        board.add(e.checker, e.toRow, e.toCol)
     	},true);
 
-        board.addEventListener('remove', function(e) {
-        	// Your code here
-        }, true);
+      board.addEventListener('remove', function(e) {
+      	// Your code here
+      }, true);
 
-        board.addEventListener('promote',function (e) {
-    		// Your code here
+      board.addEventListener('promote',function (e) {
+  		// Your code here
     	},true);
 
-        
-        $("#btnNewGame").click(function(evt) {
-            board.prepareNewGame();
-        });
 
-        $("#btnAutoMove").click(function(evt) {
-          var playerColor = whoseTurn;
-          var playerDirection = directionOf(playerColor);
-          var result = rules.makeRandomMove(playerColor, playerDirection);
-          if (result != null) {
-            toggleTurn();
-          }
-        });
+      $("#btnNewGame").click(function(evt) {
+          board.prepareNewGame();
+      });
 
-        board.prepareNewGame();
+      $("#btnAutoMove").click(function(evt) {
+        var playerColor = whoseTurn;
+        var playerDirection = directionOf(playerColor);
+        var result = rules.makeRandomMove(playerColor, playerDirection);
+        if (result != null) {
+          toggleTurn();
+        }
+      });
+
+      board.prepareNewGame();
 
     });
 </script>
@@ -132,9 +165,8 @@
         </td>
 
         <td id="content">
-			
-				<!-- Your code here -->
-            
+      		<canvas id="checkerboard" width="400" height="400">
+      		</canvas>
         </td>
     </tr>
 
