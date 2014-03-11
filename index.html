@@ -80,37 +80,58 @@
 
       var cellsize = 400 / board.boardSize;
 
-      var repaintBoard = function (){
+      var clearBoard = function (){
         var checkerboard = document.getElementById("checkerboard");
+        $(checkerboard).html('');
 
         for (var i=0; i<board.boardSize; i++){
             var row = checkerboard.appendChild(document.createElement("div"));
+            $(row).css('height', cellsize);
             for (var j=0; j<board.boardSize; j++){
-                row.appendChild(document.createElement("span"));
+              var span = document.createElement("span");
+              $(span).css('width', cellsize).css('height', cellsize);
+              row.appendChild(span);
             }
         }
       }
 
-      repaintBoard();
-
-      var getColorAt = function (row, col){
-        if ((row + col) % 2 == 0){
-          return "#FFF";
-        } else {
-          return "#000";
-        }
-      }
+      clearBoard();
 
       var drawCheckerAt = function (checker, row, col){
         var base_image = new Image();
         base_image.src = "graphics/" + checker.color + (checker.isKing ? "-king.png" : "-piece.png");
-        var cell = $('#checkerboard tr:eq(' + row + ') td:eq(' + col + ')');
+        var cell = $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
+        base_image.onload = function() {
+          $(cell).html(base_image);
+        };
 
       }
 
       var removeCheckerAt = function (row, col){
-      var cell = $('#checkerboard tr:eq(' + row + ') td:eq(' + col + ')');
+        var cell = $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
+        cell.html('');
+      }
 
+      var drawArrow = function (fromx, fromy, tox, toy){
+        var canvas = document.getElementById("arrowcanvas");
+        var context = canvas.getContext('2d');
+
+        // remove previous arrow
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // draw new arrow
+        var headlen = 10;
+        var angle = Math.atan2(toy-fromy,tox-fromx);
+        context.beginPath()
+        context.moveTo(fromx, fromy);
+        context.lineTo(tox, toy);
+        context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+        context.moveTo(tox, toy);
+        context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+        context.closePath();
+        context.strokeStyle="yellow";
+        context.lineWidth=5;
+        context.stroke();
       }
 
       board.addEventListener('add',function (e) {
@@ -120,8 +141,9 @@
     	board.addEventListener('move',function (e) {
         removeCheckerAt(e.details.fromRow, e.details.fromCol);
         drawCheckerAt(e.details.checker, e.details.toRow, e.details.toCol);
-
-    	},true);
+        drawArrow((e.details.fromCol + 0.5) * cellsize, (e.details.fromRow + 0.5) * cellsize,
+                  (e.details.toCol + 0.5) * cellsize, (e.details.toRow + 0.5) * cellsize);
+    	}, true);
 
       board.addEventListener('remove', function(e) {
         removeCheckerAt(e.details.row, e.details.col);
@@ -133,9 +155,9 @@
       },true);
 
 
-      $("#btnNewGame").click(function(evt) {
+      $("#btnNewGame").click(function(evt){
+          clearBoard();
           board.prepareNewGame();
-          repaintBoard();
           toggleTurn("black");
       });
 
@@ -169,8 +191,8 @@
         </td>
 
         <td id="content">
-      		<canvas id="checkerboard" width="400" height="400" />
-          <canvas id="arrowcanvas" width="400" height="400" />
+      		<div id="checkerboard" width="400px" height="400px" ></div>
+          <canvas id="arrowcanvas" width="400px" height="400px" />
 
         </td>
     </tr>
