@@ -16,4 +16,9 @@
 
 #checkerboard{
   background-color:white;
+  z-index: 1;
+}
+
+#arrowcanvas{
+  z-index: 2;
 }

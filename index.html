@@ -59,9 +59,7 @@
     // Fill in this function to toggle the display for whose turn
     // The color parameter should be either "black" or "red"
     var toggleTurn = function(color) {
-	// Your code here
-  console.log($("#turnIndicator"));
-      $("#turnIndicator").html(color + " turn");
+      $("#turnIndicator").html(color + "'s turn");
       whoseTurn = color;
     }
 
@@ -82,26 +80,32 @@
 
       var can = document.getElementById('checkerboard');
       var ctx = can.getContext('2d');
-
-      // set up a pattern
-      var pattern = document.createElement('canvas');
       var cellsize = 400 / board.boardSize;
-      pattern.width = 2 * cellsize;
-      pattern.height = 2 * cellsize;
-      var pctx = pattern.getContext('2d');
-      pctx.fillStyle = "rgb(0, 0, 0)";
-      pctx.fillRect(0, cellsize, cellsize, cellsize);
-      pctx.fillRect(cellsize, 0, cellsize, cellsize);
 
-      // draw pattern
-      var pattern = ctx.createPattern(pattern, "repeat");
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(0, 400);
-      ctx.lineTo(400, 400);
-      ctx.lineTo(400, 0);
-      ctx.fillStyle = pattern;
-      ctx.fill();
+
+
+      var repaintBoard = function (){
+        // set up a pattern
+        var pattern = document.createElement('canvas');
+        pattern.width = 2 * cellsize;
+        pattern.height = 2 * cellsize;
+        var pctx = pattern.getContext('2d');
+        pctx.fillStyle = "rgb(0, 0, 0)";
+        pctx.fillRect(0, cellsize, cellsize, cellsize);
+        pctx.fillRect(cellsize, 0, cellsize, cellsize);
+
+        // draw pattern
+        var pattern = ctx.createPattern(pattern, "repeat");
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, 400);
+        ctx.lineTo(400, 400);
+        ctx.lineTo(400, 0);
+        ctx.fillStyle = pattern;
+        ctx.fill();
+      }
+
+      repaintBoard();
 
       var getColorAt = function (row, col){
         if ((row + col) % 2 == 0){
@@ -121,7 +125,7 @@
 
       var removeCheckerAt = function (row, col){
         var context = can.getContext("2d");
-        context.fillStyle = getColorAt(row, col);
+        context.fillStyle = ((row + col) % 2 == 0) ? "#FFF" : "#000";
         ctx.fillRect(col*cellsize, row*cellsize, cellsize, cellsize);
       }
 
@@ -132,6 +136,7 @@
     	board.addEventListener('move',function (e) {
         removeCheckerAt(e.details.fromRow, e.details.fromCol);
         drawCheckerAt(e.details.checker, e.details.toRow, e.details.toCol);
+
     	},true);
 
       board.addEventListener('remove', function(e) {
@@ -146,6 +151,7 @@
 
       $("#btnNewGame").click(function(evt) {
           board.prepareNewGame();
+          repaintBoard();
           toggleTurn("black");
       });
 
@@ -172,15 +178,16 @@
     <tr>
         <td id="navigation">
           <table>
-			  <tr><td><div id="turnIndicator">blorp</div></td></tr>
+			  <tr><td><div id="turnIndicator">black's turn</div></td></tr>
               <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
               <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
             </table>
         </td>
 
         <td id="content">
-      		<canvas id="checkerboard" width="400" height="400">
-      		</canvas>
+      		<canvas id="checkerboard" width="400" height="400" />
+          <canvas id="arrowcanvas" width="400" height="400" />
+
         </td>
     </tr>
 

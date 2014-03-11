@@ -6,16 +6,16 @@
  * Each square of the checkboard may contain at most one Checker, or it may be
  * empty. Each square is identified by its row and column, numbered from 0 to
  * size-1.  Square [0,0] is in the upper-left corner of the checkerboard.
- * Rows are numbered downward, and columns are numbered to the right.  Square 
- * [0,0] is white, and black and white squares alternate across each row and 
- * down each column.  
+ * Rows are numbered downward, and columns are numbered to the right.  Square
+ * [0,0] is white, and black and white squares alternate across each row and
+ * down each column.
  * <p>
  * Boards are mutable: checkers can be added, removed, and moved
  * (The size of a board is immutable, however.)
  * <p>
  * The board broadcasts three event types: "add",
- * "remove", "move", respectively.  The event parameter in all 
- * cases has type BoardEvent. 
+ * "remove", "move", respectively.  The event parameter in all
+ * cases has type BoardEvent.
  */
 
 var Board = function(size) {
@@ -25,7 +25,7 @@ var Board = function(size) {
 
     // boardSize is number of squares on one side of checkerboard
     this.boardSize = size;
-    
+
     // square is a two dimensional array representating the checkerboard
     // square[row][col] is the Checker in that square, or null if square is empty
     this.square = new Array(this.boardSize);
@@ -33,7 +33,7 @@ var Board = function(size) {
     for (var i=0; i<=this.boardSize; i++){
 		this.square[i] = [];
 	}
-    
+
     // if true, enables representation invariant checking
     this.doCheckRep = true;
 
@@ -49,10 +49,10 @@ var Board = function(size) {
             }
         }
     }
-    
+
     /*
      * Test whether row and column identify a square.
-     * @throws Error if either row or col 
+     * @throws Error if either row or col
      * is outside the range [0,size-1]
      */
     this.isValidLocation = function(row, col) {
@@ -80,11 +80,11 @@ var Board = function(size) {
         	alert(s);
         }
     }
-    
+
     ////////////////////////////////////////////////
     // Public methods
     //
-    
+
     /**
      * board.size is the number of squares on each side of the checkerboard
      */
@@ -101,7 +101,7 @@ var Board = function(size) {
 	        return this.square[row][col];
 	    }
     }
-    
+
     /**
      * Get location of checker (row and column) if it's found on this
      * board, or null if not found.
@@ -125,7 +125,7 @@ var Board = function(size) {
 
     	return results;
     }
-    
+
 	/**
 	 * Add a new checker to the board.  Requires checker to be not currently
 	 * on the board, and (row,col) must designate a valid empty square.
@@ -134,20 +134,20 @@ var Board = function(size) {
 		if (this.isEmptyLocation(row,col)){
 
 			var details = {checker:checker, row:row, col:col};
-						
+
 			checker.row = row;
 			checker.col = col;
-			
+
 			this.square[row][col] = checker;
-	    
+
 	        // rep invariant should be satisfied here, before we start
 	        // firing events
 			this.checkRep();
-			
+
 			this.dispatchBoardEvent("add", details);
 		}
-	} 
-	
+	}
+
 	/**
 	 * Move a checker from its current square to another square.
 	 * Requires checker to be already found on this board, and (toRow,toCol)
@@ -157,38 +157,38 @@ var Board = function(size) {
 		if (this.isEmptyLocation(toRow,toCol)){
 
 			var details = {checker:checker, toRow:toRow, toCol:toCol, fromRow:checker.row, fromCol:checker.col};
-		
+
 			delete this.square[checker.row][checker.col];
 			this.square[toRow][toCol] = checker;
-			
+
 			if (this.canBeKing(checker, toRow, toCol)){
 				this.promote(checker);
 			}
-	    
+
 			checker.row = toRow;
 			checker.col = toCol;
-			
-	        // rep invariant should be satisfied here, before we start firing events
+
+	    // rep invariant should be satisfied here, before we start firing events
 			this.checkRep();
-			
+
 			this.dispatchBoardEvent("move", details);
 		}
 	}
-	
+
 	/**
 	 * Remove a checker from this board.  Requires checker to be found on this
 	 * board.
 	 */
 	this.remove = function(checker) {
 		var details = {checker:checker, row:checker.row, col:checker.col};
-			
+
 		delete this.square[checker.row][checker.col];
 
 		this.checkRep();
-		
-		this.dispatchBoardEvent("remove", details);			
+
+		this.dispatchBoardEvent("remove", details);
 	}
-	
+
 	/**
 	 * Remove a checker at a given location from this board.  Requires checker to be found on this
 	 * board.
@@ -196,19 +196,19 @@ var Board = function(size) {
 	this.removeAt = function(row, col) {
 		if (!this.square[row][col]){
 			alert("no checker at " + r + "," + c);
-			
+
 		} else {
 			var details = {checker:this.square[row][col], row:row, col:col};
-					
+
 			delete this.square[row][col];
-			
+
 			this.checkRep();
-			
-			this.dispatchBoardEvent("remove", details);		
+
+			this.dispatchBoardEvent("remove", details);
 		}
 	}
-	
-	
+
+
 	/**
 	 * Remove all checkers from board.
 	 */
@@ -221,7 +221,7 @@ var Board = function(size) {
             }
         }
 	}
-	
+
 	/**
 	 * Promote a checker piece to become king piece.
 	 */
@@ -229,14 +229,14 @@ var Board = function(size) {
 		checker.isKing = true;
 		this.dispatchBoardEvent("promote", {checker:checker});
 	}
-	
+
 
     ////////////////////////////////////////////////
     // Events listening interface
     //
 
 	this.allHandlers = new Array();
-	
+
 	/**
 	 * Dispatch a new event to all the event listeners of a given event type
 	 */
@@ -263,7 +263,7 @@ var Board = function(size) {
    ////////////////////////////////////////////////
    // Rules of Checkers
    //
-  
+
   /**
    * Returns a list of valid moves.
    */
@@ -378,12 +378,12 @@ var Board = function(size) {
   this.isValidJump = function(checker, fromRow, fromCol, toRow, toCol, playerDirection) {
     // Is the to-location a valid one?
     if (! this.isValidLocation(toRow, toCol)) return false;
-    
+
     // Is the to-location occupied?
     if (! this.isEmptyLocation(toRow, toCol)) return false;
 
     // Normal players must not jump backward
-    if ((((toRow - fromRow) * playerDirection) < 0) && (! checker.isKing)) return false; 
+    if ((((toRow - fromRow) * playerDirection) < 0) && (! checker.isKing)) return false;
 
     // Jump must be two spaces horizontally
     if (abs(toRow - fromRow) != 2) return false;
@@ -395,31 +395,31 @@ var Board = function(size) {
     // A piece must not jump its own kind
     if (this.getCheckerAt((toRow+fromRow)/2, (toCol+fromCol)/2).color == checker.color) return false;
 
-    return true; 
+    return true;
   }
 
     ////////////////////////////////////////////////
     // Utilities
     //
-    
+
 	/**
 	 * Prepare new board with standard setup
 	 */
 	this.prepareNewGame = function(){
 		this.checkRep();
-		
+
 		this.clear();
-		
+
 		//red above, black below
 		for (var i=0; i<this.boardSize; i++){
 			var chkRed = new Checker("red", false);
 			var chkBlack = new Checker("black", false);
-			
+
 			this.add(chkRed, (1 - i%2), i);
 			this.add(chkBlack , (this.boardSize - 1 - i%2), i);
 		}
 	}
-	
+
 	/**
 	 * Find a random checker
 	 * Return a checker object
@@ -430,7 +430,7 @@ var Board = function(size) {
 			return allCheckers[Math.floor(Math.random() * allCheckers.length)];
 		}
 	}
-	
+
 	/**
 	 * Find a random non-king checker
 	 * Return a checker object
@@ -443,15 +443,15 @@ var Board = function(size) {
 				allNonKings.push(allCheckers[i]);
 			}
 		}
-		
+
 		if (allNonKings){
 			return allNonKings[Math.floor(Math.random() * allNonKings.length)];
 		}
 	}
-	
+
 	/**
 	 * Find a random empty location
-	 * Return {row, col} 
+	 * Return {row, col}
 	 */
 	this.getRandomEmptyLocation = function(){
 		var availLocs = [];
@@ -467,18 +467,18 @@ var Board = function(size) {
 			return availLocs[Math.floor(Math.random() * availLocs.length)];
 		}
 	}
-	
+
 	/**
 	 * Check if a piece can be promoted to king at given location
-	 */		
+	 */
 	this.canBeKing = function(checker, row, col){
 		if (checker.color == "red"){
 			return row == this.boardSize - 1;
 		} else {
 			return row == 0;
 		}
-	}	
-			
+	}
+
     /**
      * Get a string representation for the board as a multiline matrix.
      */
@@ -496,5 +496,5 @@ var Board = function(size) {
             result += "<br/>";
         }
         return result.toString();
-    }  
+    }
 }
