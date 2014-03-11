@@ -100,29 +100,39 @@
       ctx.fillStyle = pattern;
       ctx.fill();
 
-      var getColorAt = function(row, col){
+      var getColorAt = function (row, col){
         if ((row + col) % 2 == 0){
-          return "FFF";
+          return "#FFF";
         } else {
-          return "000"
+          return "#000";
         }
       }
 
+      var drawCheckerAt = function (checker, row, col){
+        var base_image = new Image();
+        base_image.src = "graphics/" + checker.color + (checker.isKing ? "-king.png" : "-piece.png");
+        base_image.onload = function(){
+          ctx.drawImage(base_image, col*cellsize, row*cellsize, cellsize, cellsize);
+        }
+      }
+
+      var removeCheckerAt = function (row, col){
+        var context = can.getContext("2d");
+        context.fillStyle = getColorAt(row, col);
+        ctx.fillRect(col*cellsize, row*cellsize, cellsize, cellsize);
+      }
+
       board.addEventListener('add',function (e) {
-    		  base_image = new Image();
-          base_image.src = "graphics/" + e.checker.color + (e.checker.isKing ? "-king.png" : "-piece.png");
-          base_image.onload = function(){
-            context.drawImage(base_image, e.row*cellsize, e.col*cellsize, cellsize, cellsize);
-          }
+        drawCheckerAt(e.details.checker, e.details.row, e.details.col);
     	},true);
 
     	board.addEventListener('move',function (e) {
-    		board.remove(e.checker);
-        board.add(e.checker, e.toRow, e.toCol)
+        removeCheckerAt(e.details.fromRow, e.details.fromCol);
+        drawCheckerAt(e.details.checker, e.details.toRow, e.details.toCol);
     	},true);
 
       board.addEventListener('remove', function(e) {
-      	// Your code here
+        removeCheckerAt(e.details.row, e.details.col);
       }, true);
 
       board.addEventListener('promote',function (e) {
