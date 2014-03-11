@@ -80,6 +80,13 @@
 
       var cellsize = 400 / board.boardSize;
 
+      var clearArrows = function () {
+        var canvas = document.getElementById("arrowcanvas");
+        var context = canvas.getContext('2d');
+        // remove previous arrow
+        context.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
       var clearBoard = function (){
         var checkerboard = document.getElementById("checkerboard");
         $(checkerboard).html('');
@@ -93,6 +100,8 @@
               row.appendChild(span);
             }
         }
+
+        clearArrows();
       }
 
       clearBoard();
@@ -112,12 +121,12 @@
         cell.html('');
       }
 
+
       var drawArrow = function (fromx, fromy, tox, toy){
         var canvas = document.getElementById("arrowcanvas");
         var context = canvas.getContext('2d');
 
-        // remove previous arrow
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        clearArrows();
 
         // draw new arrow
         var headlen = 10;
