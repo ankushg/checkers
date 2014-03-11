@@ -11,14 +11,27 @@
 }
 
 #content{
-	background-color:gray;
+/*	background-color:gray;*/
 }
 
-#checkerboard{
-  background-color:white;
-  z-index: 1;
-}
 
 #arrowcanvas{
   z-index: 2;
+}
+
+
+#checkerboard span{
+    display: inline-block;
+    z-index: 1;
+    width: 32px;
+    height: 32px;
+}
+
+#chessBoard div:nth-child(odd) span:nth-child(even),
+#chessBoard div:nth-child(even) span:nth-child(odd){
+    background-color: black;
+}
+#chessBoard div:nth-child(even) span:nth-child(even),
+#chessBoard div:nth-child(odd) span:nth-child(odd){
+    background-color: white;
 }
