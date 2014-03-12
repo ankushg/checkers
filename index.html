@@ -108,6 +108,8 @@
 
       var drawCheckerAt = function (checker, row, col){
         var base_image = new Image();
+        base_image.height = cellsize;
+        base_image.width = cellsize;
         base_image.src = "graphics/" + checker.color + (checker.isKing ? "-king.png" : "-piece.png");
         var cell = $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
         base_image.onload = function() {
