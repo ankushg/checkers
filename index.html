@@ -1,49 +1,40 @@
 <!DOCTYPE html>
-
 <!--
   COLLABORATORS:
   none
 -->
 <html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <title>Checkerboard</title>
 
-<head>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-<title>Checkerboard</title>
+    <!-- Load style sheets -->
+    <link rel="stylesheet" type="text/css" href="mainLayout.css" />
 
-<!-- Load style sheets -->
-<link rel="stylesheet" type="text/css" href="mainLayout.css" />
+    <!-- Load any supplemental Javascript libraries here -->
+    <script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="checker.js"></script>
+    <script type="text/javascript" src="boardEvent.js"></script>
+    <script type="text/javascript" src="board.js"></script>
+    <script type="text/javascript" src="rules.js"></script>
+    <script type="text/javascript" src="ui-logic.js"></script>
+  </head>
 
-<!-- Load any supplemental Javascript libraries here -->
-<script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
-<script type="text/javascript" src="checker.js"></script>
-<script type="text/javascript" src="boardEvent.js"></script>
-<script type="text/javascript" src="board.js"></script>
-<script type="text/javascript" src="rules.js"></script>
-<script type="text/javascript" src="ui-logic.js"></script>
-
-</head>
-
-<body>
-
-<table id="mainTable">
-    <tr>
-        <td id="navigation">
-          <table>
-			  <tr><td><div id="turnIndicator">black's turn</div></td></tr>
-              <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
-              <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
-            </table>
-        </td>
-
-        <td id="content">
-      		<div id="checkerboard" width="400px" height="400px" ></div>
-          <canvas id="arrowcanvas" width="400px" height="400px" />
-
-        </td>
-    </tr>
-
-   </table>
-
-</body>
-
+  <body>
+    <table id="mainTable">
+      <tr>
+          <td id="navigation">
+            <table>
+  			  <tr><td><div id="turnIndicator">black's turn</div></td></tr>
+                <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+                <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+              </table>
+          </td>
+          <td id="content">
+        		<div id="checkerboard" width="400px" height="400px" ></div>
+            <canvas id="arrowcanvas" width="400px" height="400px" />
+          </td>
+      </tr>
+     </table>
+  </body>
 </html>
