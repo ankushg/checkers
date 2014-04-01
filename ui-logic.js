@@ -29,13 +29,13 @@ var directionOf = function(color) {
     return -1;
   }
   return 1;
-}
+};
 
 // The color parameter should be either "black" or "red"
 var toggleTurn = function(color) {
   $("#turnIndicator").html(color + "'s turn");
   whoseTurn = color;
-}
+};
 
 
 
@@ -59,7 +59,7 @@ $(document).ready(function() {
     var context = canvas.getContext('2d');
     // remove previous arrow
     context.clearRect(0, 0, canvas.width, canvas.height);
-  }
+  };
 
   var clearBoard = function (){
     var checkerboard = document.getElementById("checkerboard");
@@ -76,30 +76,28 @@ $(document).ready(function() {
     }
 
     clearArrows();
-  }
+  };
 
   clearBoard();
 
   var getCellAt = function (row, col){
-
-  }
+    return $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
+  };
 
   var drawCheckerAt = function (checker, row, col){
     var base_image = new Image();
     base_image.height = cellsize;
     base_image.width = cellsize;
     base_image.src = "graphics/" + checker.color + (checker.isKing ? "-king.png" : "-piece.png");
-    var cell = $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
     base_image.onload = function() {
-      $(cell).html(base_image);
+      $(getCellAt(row, col)).html(base_image);
     };
 
-  }
+  };
 
   var removeCheckerAt = function (row, col){
-    var cell = $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
-    cell.html('');
-  }
+    getCellAt(row, col).html('');
+  };
 
 
   var drawArrow = function (fromx, fromy, tox, toy){
@@ -111,7 +109,7 @@ $(document).ready(function() {
     // draw new arrow
     var headlen = 10;
     var angle = Math.atan2(toy-fromy,tox-fromx);
-    context.beginPath()
+    context.beginPath();
     context.moveTo(fromx, fromy);
     context.lineTo(tox, toy);
     context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
@@ -121,7 +119,7 @@ $(document).ready(function() {
     context.strokeStyle="yellow";
     context.lineWidth=5;
     context.stroke();
-  }
+  };
 
   board.addEventListener('add',function (e) {
     drawCheckerAt(e.details.checker, e.details.row, e.details.col);
@@ -154,7 +152,7 @@ $(document).ready(function() {
     var playerColor = whoseTurn;
     var playerDirection = directionOf(playerColor);
     var result = rules.makeRandomMove(playerColor, playerDirection);
-    if (result != null) {
+    if (result !== null) {
       toggleTurn( playerColor=="red" ? "black" : "red");
     }
   });
