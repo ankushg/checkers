@@ -10,7 +10,29 @@
 	width:100%
 }
 
+
 #content{
+
+}
+
+#turnIndicator {
+  color: white;
+  font-size: large;
+  text-align:center;
+  padding-top:5px;
+  padding-bottom:5px;
+}
+
+.blackturn {
+  background: black;
+}
+
+.redturn{
+  background: red;
+}
+
+body{
+  font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;
 }
 
 

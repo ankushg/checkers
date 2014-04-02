@@ -37,20 +37,22 @@ var directionOf = function(color) {
 // The color parameter should be either "black" or "red"
 var toggleTurn = function(color) {
   $("#turnIndicator").html(color + "'s turn");
+  $("#turnIndicator").removeClass(color === "red" ? "black" : "red" + 'turn');
+  $("#turnIndicator").addClass(color + 'turn');
   whoseTurn = color;
 };
 
 var checkDoButtonValidity = function() {
   if(undoStack.length > 0) {
-    $("#btnUndo").prop('disabled', false);
+    $("#btnUndo").button( "option", "disabled", false );
   } else {
-    $("#btnUndo").prop('disabled', true);
+    $("#btnUndo").button( "option", "disabled", true );
   }
 
   if(redoStack.length > 0) {
-    $("#btnRedo").prop('disabled', false);
+    $("#btnRedo").button( "option", "disabled", false );
   } else {
-    $("#btnRedo").prop('disabled', true);
+    $("#btnRedo").button( "option", "disabled", true );
   }
 };
 
@@ -129,7 +131,8 @@ $(document).ready(function() {
         $(this).draggable('enable');
       },
       containment: '#checkerboard',
-      revert: 'valid'
+      revert: 'valid',
+      zIndex: 100
     });
 
     base_image.onload = function() {
@@ -202,7 +205,7 @@ $(document).ready(function() {
 
   var redo = function(){
     var move = redoStack.pop();
-    toggleTurn( whoseTurn=="red" ? "black" : "red");
+    toggleTurn(whoseTurn=="red" ? "black" : "red");
     var checker = board.getCheckerAt(move.from_row, move.from_col);
     if(move.made_king) checker.isKing = true;
 
@@ -239,6 +242,13 @@ $(document).ready(function() {
   $("#btnRedo").click(function(evt){
     redo();
   });
+
+  $( "input[type=button]" )
+    .button()
+    .click(function( event ) {
+      event.preventDefault();
+    });
+
   board.prepareNewGame();
   checkDoButtonValidity();
 });
