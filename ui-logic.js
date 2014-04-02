@@ -74,11 +74,14 @@ $(document).ready(function() {
           $(span).droppable({
             accept: ".checker",
             drop: function (event, ui){
-              if($(event.target).find('img').length === 0)  {
-                board.moveTo(board.getCheckerAt(ui.draggable[0].row, ui.draggable[0].col), event.target.row, event.target.col);
+              // black = +1, red = -1
+              // function(checker, turnDirection, playerDirection, toRow, toCol)
+              var checker = board.getCheckerAt(ui.draggable[0].row, ui.draggable[0].col);
+              if(rules.makeMove(checker, (whoseTurn === "black") ? -1 : +1,
+                             (checker.color === "black") ? -1 : +1,
+                             event.target.row, event.target.col) === null) {
               } else {
-                console.log(ui);
-                $(ui.draggable[0]).draggable('enable');
+                toggleTurn( (whoseTurn==="red") ? "black" : "red");
               }
             }
           });
@@ -173,11 +176,10 @@ $(document).ready(function() {
   });
 
   $("#btnAutoMove").click(function(evt) {
-    var playerColor = whoseTurn;
-    var playerDirection = directionOf(playerColor);
-    var result = rules.makeRandomMove(playerColor, playerDirection);
+    var playerDirection = directionOf(whoseTurn);
+    var result = rules.makeRandomMove(whoseTurn, playerDirection);
     if (result !== null) {
-      toggleTurn( playerColor=="red" ? "black" : "red");
+      toggleTurn( whoseTurn=="red" ? "black" : "red");
     }
   });
 
