@@ -16,6 +16,7 @@
 
 #arrowcanvas {
   position: absolute;
+  pointer-events: none;
 }
 
 #checkerboard {

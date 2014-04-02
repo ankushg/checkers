@@ -42,13 +42,11 @@ var toggleTurn = function(color) {
 // This allows the Javascript code inside this block to only run when the page
 // has finished loading in the browser.
 $(document).ready(function() {
-
     if ($.getUrlVar('size') && $.getUrlVar('size') >= 6) {
         board = new Board($.getUrlVar('size'));
     } else {
         board = new Board(DEFAULT_BOARD_SIZE);
     }
-
 
   rules = new Rules(board);
 
@@ -70,7 +68,20 @@ $(document).ready(function() {
         $(row).css('height', cellsize);
         for (var j=0; j<board.boardSize; j++){
           var span = document.createElement("span");
+          span.row = i;
+          span.col = j;
           $(span).css('width', cellsize).css('height', cellsize);
+          $(span).droppable({
+            accept: ".checker",
+            drop: function (event, ui){
+              if($(event.target).find('img').length === 0)  {
+                board.moveTo(board.getCheckerAt(ui.draggable[0].row, ui.draggable[0].col), event.target.row, event.target.col);
+              } else {
+                console.log(ui);
+                $(ui.draggable[0]).draggable('enable');
+              }
+            }
+          });
           row.appendChild(span);
         }
     }
@@ -89,6 +100,19 @@ $(document).ready(function() {
     base_image.height = cellsize;
     base_image.width = cellsize;
     base_image.src = "graphics/" + checker.color + (checker.isKing ? "-king.png" : "-piece.png");
+    base_image.row = row;
+    base_image.col = col;
+    $(base_image).addClass('checker');
+    $(base_image).addClass(checker.color);
+
+    $(base_image).draggable({
+      stop: function(event, ui) {
+        $(this).draggable('enable');
+      },
+      containment: '#checkerboard',
+      revert: 'valid'
+    });
+
     base_image.onload = function() {
       $(getCellAt(row, col)).html(base_image);
     };
@@ -157,6 +181,6 @@ $(document).ready(function() {
     }
   });
 
-  board.prepareNewGame();
 
+  board.prepareNewGame();
 });

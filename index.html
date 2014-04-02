@@ -9,10 +9,12 @@
     <title>Checkerboard</title>
 
     <!-- Load style sheets -->
+  	<link href="css/ui-lightness/jquery-ui-1.10.4.custom.css" type="text/css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="mainLayout.css" />
 
     <!-- Load any supplemental Javascript libraries here -->
-    <script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="external_js/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="external_js/jquery-ui-1.10.4.custom.js"></script>
     <script type="text/javascript" src="checker.js"></script>
     <script type="text/javascript" src="boardEvent.js"></script>
     <script type="text/javascript" src="board.js"></script>
@@ -23,17 +25,17 @@
   <body>
     <table id="mainTable">
       <tr>
-          <td id="navigation">
-            <table>
-  			  <tr><td><div id="turnIndicator">black's turn</div></td></tr>
-                <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
-                <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
-              </table>
-          </td>
-          <td id="content">
-        		<div id="checkerboard" width="400px" height="400px" ></div>
-            <canvas id="arrowcanvas" width="400px" height="400px" />
-          </td>
+        <td id="navigation">
+          <table>
+    			  <tr><td><div id="turnIndicator">black's turn</div></td></tr>
+            <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+            <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+          </table>
+        </td>
+        <td id="content">
+      		<div id="checkerboard" width="400px" height="400px" ></div>
+          <canvas id="arrowcanvas" width="400px" height="400px" />
+        </td>
       </tr>
      </table>
   </body>
