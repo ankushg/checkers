@@ -1,20 +1,20 @@
 //This script extracts parameters from the URL
 //from jquery-howto.blogspot.com
 $.extend({
-    getUrlVars : function() {
-        var vars = [], hash;
-        var hashes = window.location.href.slice(
-                window.location.href.indexOf('?') + 1).split('&');
-        for ( var i = 0; i < hashes.length; i++) {
-            hash = hashes[i].split('=');
-            vars.push(hash[0]);
-            vars[hash[0]] = hash[1];
-        }
-        return vars;
-    },
-    getUrlVar : function(name) {
-        return $.getUrlVars()[name];
-    }
+  getUrlVars : function() {
+      var vars = [], hash;
+      var hashes = window.location.href.slice(
+              window.location.href.indexOf('?') + 1).split('&');
+      for ( var i = 0; i < hashes.length; i++) {
+          hash = hashes[i].split('=');
+          vars.push(hash[0]);
+          vars[hash[0]] = hash[1];
+      }
+      return vars;
+  },
+  getUrlVar : function(name) {
+      return $.getUrlVars()[name];
+  }
 });
 
 var DEFAULT_BOARD_SIZE = 8;
@@ -23,6 +23,8 @@ var DEFAULT_BOARD_SIZE = 8;
 var board;
 var rules;
 var whoseTurn = "black";
+var undoStack = [];
+var redoStack = [];
 
 var directionOf = function(color) {
   if (color == "black") {
@@ -74,15 +76,12 @@ $(document).ready(function() {
           $(span).droppable({
             accept: ".checker",
             drop: function (event, ui){
-              // black = +1, red = -1
-              // function(checker, turnDirection, playerDirection, toRow, toCol)
               var checker = board.getCheckerAt(ui.draggable[0].row, ui.draggable[0].col);
-              if(rules.makeMove(checker, (whoseTurn === "black") ? -1 : +1,
-                             (checker.color === "black") ? -1 : +1,
-                             event.target.row, event.target.col) === null) {
-              } else {
-                toggleTurn( (whoseTurn==="red") ? "black" : "red");
-              }
+              var move = rules.makeMove(checker, directionOf(whoseTurn), directionOf(checker.color), event.target.row, event.target.col);
+              if(move !== null) {
+                redoStack = [];
+                toggleTurn((whoseTurn==="red") ? "black" : "red");
+                undoStack.push(move);              }
             }
           });
           row.appendChild(span);
@@ -166,8 +165,40 @@ $(document).ready(function() {
   board.addEventListener('promote',function (e) {
     removeCheckerAt(e.details.row, e.details.col);
     drawCheckerAt(e.details.checker, e.details.row, e.details.col);
-  },true);
+  }, true);
 
+  var undo = function(){
+    var move = undoStack.pop();
+    toggleTurn(whoseTurn=="red" ? "black" : "red");
+    var checker = board.getCheckerAt(move.to_row, move.to_col);
+    if(move.made_king){
+      checker.isKing = false;
+    }
+
+    board.moveTo(checker, move.from_row, move.from_col);
+
+    for(var c in move.removed){
+      if(c !== null){
+        var newChecker = Checker(c.color, c.isKing);
+        board.add(newChecker, c.row, c.col);
+      }
+    }
+    redoStack.push(move);
+  };
+
+  var redo = function(){
+    var move = redoStack.pop();
+    toggleTurn( whoseTurn=="red" ? "black" : "red");
+    var checker = board.getCheckerAt(move.from_row, move.from_col);
+    if(move.made_king) checker.isKing = true;
+
+    board.moveTo(checker, move.to_row, move.to_col);
+
+    for(var c in move.removed){
+      board.removeAt(c.row, c.col);
+    }
+    undoStack.push(move);
+  };
 
   $("#btnNewGame").click(function(evt){
       clearBoard();
@@ -179,10 +210,18 @@ $(document).ready(function() {
     var playerDirection = directionOf(whoseTurn);
     var result = rules.makeRandomMove(whoseTurn, playerDirection);
     if (result !== null) {
+      redoStack = [];
+      undoStack.push(result);
       toggleTurn( whoseTurn=="red" ? "black" : "red");
     }
   });
 
+  $("#btnUndo").click(function(evt){
+    undo();
+  });
 
+  $("#btnRedo").click(function(evt){
+    redo();
+  });
   board.prepareNewGame();
 });
