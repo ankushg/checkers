@@ -26,6 +26,7 @@ var whoseTurn = "black";
 var undoStack = [];
 var redoStack = [];
 
+
 var directionOf = function(color) {
   if (color == "black") {
     return -1;
@@ -37,6 +38,20 @@ var directionOf = function(color) {
 var toggleTurn = function(color) {
   $("#turnIndicator").html(color + "'s turn");
   whoseTurn = color;
+};
+
+var checkDoButtonValidity = function() {
+  if(undoStack.length > 0) {
+    $("#btnUndo").prop('disabled', false);
+  } else {
+    $("#btnUndo").prop('disabled', true);
+  }
+
+  if(redoStack.length > 0) {
+    $("#btnRedo").prop('disabled', false);
+  } else {
+    $("#btnRedo").prop('disabled', true);
+  }
 };
 
 
@@ -81,7 +96,9 @@ $(document).ready(function() {
               if(move !== null) {
                 redoStack = [];
                 toggleTurn((whoseTurn==="red") ? "black" : "red");
-                undoStack.push(move);              }
+                undoStack.push(move);
+                checkDoButtonValidity();
+             }
             }
           });
           row.appendChild(span);
@@ -176,14 +193,11 @@ $(document).ready(function() {
     }
 
     board.moveTo(checker, move.from_row, move.from_col);
-
-    for(var c in move.removed){
-      if(c !== null){
-        var newChecker = Checker(c.color, c.isKing);
-        board.add(newChecker, c.row, c.col);
-      }
+    for(var i = 0; i < move.remove.length; i++){
+        board.add(new Checker(move.remove[i].color, move.remove[i].isKing), move.remove[i].row, move.remove[i].col);
     }
     redoStack.push(move);
+    checkDoButtonValidity();
   };
 
   var redo = function(){
@@ -194,10 +208,11 @@ $(document).ready(function() {
 
     board.moveTo(checker, move.to_row, move.to_col);
 
-    for(var c in move.removed){
-      board.removeAt(c.row, c.col);
+    for(var i = 0; i < move.remove.length; i++){
+      board.removeAt(move.remove[i].row, move.remove[i].col);
     }
     undoStack.push(move);
+    checkDoButtonValidity();
   };
 
   $("#btnNewGame").click(function(evt){
@@ -212,7 +227,8 @@ $(document).ready(function() {
     if (result !== null) {
       redoStack = [];
       undoStack.push(result);
-      toggleTurn( whoseTurn=="red" ? "black" : "red");
+      toggleTurn(whoseTurn=="red" ? "black" : "red");
+      checkDoButtonValidity();
     }
   });
 
@@ -224,4 +240,5 @@ $(document).ready(function() {
     redo();
   });
   board.prepareNewGame();
+  checkDoButtonValidity();
 });
