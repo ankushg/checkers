@@ -63,3 +63,7 @@ body{
 #checkerboard div:nth-child(odd) span:nth-child(odd){
     background-color: white;
 }
+
+.highlighted {
+  background-color: orange !important;
+}

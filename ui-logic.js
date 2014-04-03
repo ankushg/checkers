@@ -34,6 +34,24 @@ var directionOf = function(color) {
   return 1;
 };
 
+// get the span representing a given cell
+var getCellAt = function (row, col){
+  return $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
+};
+
+// remove 'highlighted' class from all cells
+var clearHighlightedSquares = function() {
+  $(".highlighted").removeClass('highlighted');
+};
+
+// add 'highlighted' class from given cells (output of rules.validMovesFor)
+var highlightSquares = function (squares) {
+  clearHighlightedSquares();
+  for(var i = 0; i < squares.length; i++){
+    getCellAt(squares[i].to_row, squares[i].to_col).addClass('highlighted');
+  }
+};
+
 // The color parameter should be either "black" or "red"
 var toggleTurn = function(color) {
   $("#turnIndicator").html(color + "'s turn");
@@ -112,9 +130,7 @@ $(document).ready(function() {
 
   clearBoard();
 
-  var getCellAt = function (row, col){
-    return $('#checkerboard > div:eq(' + row + ') > span:eq(' + col + ')');
-  };
+
 
   var drawCheckerAt = function (checker, row, col){
     var base_image = new Image();
@@ -127,11 +143,14 @@ $(document).ready(function() {
     $(base_image).addClass(checker.color);
 
     $(base_image).draggable({
+      start: function(event, ui){
+        highlightSquares(rules.validMovesFor(checker, directionOf(whoseTurn)));
+      },
       stop: function(event, ui) {
         $(this).draggable('enable');
       },
       containment: '#checkerboard',
-      revert: 'valid',
+      revert: true,
       zIndex: 100
     });
 
@@ -174,6 +193,7 @@ $(document).ready(function() {
   board.addEventListener('move',function (e) {
     removeCheckerAt(e.details.fromRow, e.details.fromCol);
     drawCheckerAt(e.details.checker, e.details.toRow, e.details.toCol);
+    clearHighlightedSquares();
     drawArrow((e.details.fromCol + 0.5) * cellsize, (e.details.fromRow + 0.5) * cellsize,
               (e.details.toCol + 0.5) * cellsize, (e.details.toRow + 0.5) * cellsize);
   }, true);
